@@ -3,33 +3,14 @@
   become: true
   tasks:
 
-    - name: Print OS information
+    - name: Ping the Raspberry Pi
+      ansible.builtin.ping:
+
+    - name: Check the uptime of the Raspberry Pi
       ansible.builtin.command:
-        cmd: uname -a
-      register: os_info
+        cmd: uptime
+      register: uptime_result
 
-    - name: Display OS information
+    - name: Display uptime
       ansible.builtin.debug:
-        msg: "{{ os_info.stdout }}"
-
-    - name: Check for available package updates (Debian/Ubuntu)
-      ansible.builtin.command:
-        cmd: apt-get -s upgrade
-      when: ansible_os_family == "Debian"
-      register: upgrade_check
-
-    - name: Display package update info (Debian/Ubuntu)
-      ansible.builtin.debug:
-        msg: "{{ upgrade_check.stdout }}"
-      when: ansible_os_family == "Debian"
-
-    - name: Check for available package updates (RedHat/CentOS)
-      ansible.builtin.command:
-        cmd: yum check-update
-      when: ansible_os_family == "RedHat"
-      register: upgrade_check
-
-    - name: Display package update info (RedHat/CentOS)
-      ansible.builtin.debug:
-        msg: "{{ upgrade_check.stdout }}"
-      when: ansible_os_family == "RedHat"
+        msg: "Uptime: {{ uptime_result.stdout }}"
