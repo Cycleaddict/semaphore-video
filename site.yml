@@ -2,6 +2,34 @@
 - hosts: my_servers
   become: true
   tasks:
-    - name: Print OS info
-      ansible.builtin.package:
-        name: apache2
+
+    - name: Print OS information
+      ansible.builtin.command:
+        cmd: uname -a
+      register: os_info
+
+    - name: Display OS information
+      ansible.builtin.debug:
+        msg: "{{ os_info.stdout }}"
+
+    - name: Check for available package updates (Debian/Ubuntu)
+      ansible.builtin.command:
+        cmd: apt-get -s upgrade
+      when: ansible_os_family == "Debian"
+      register: upgrade_check
+
+    - name: Display package update info (Debian/Ubuntu)
+      ansible.builtin.debug:
+        msg: "{{ upgrade_check.stdout }}"
+      when: ansible_os_family == "Debian"
+
+    - name: Check for available package updates (RedHat/CentOS)
+      ansible.builtin.command:
+        cmd: yum check-update
+      when: ansible_os_family == "RedHat"
+      register: upgrade_check
+
+    - name: Display package update info (RedHat/CentOS)
+      ansible.builtin.debug:
+        msg: "{{ upgrade_check.stdout }}"
+      when: ansible_os_family == "RedHat"
