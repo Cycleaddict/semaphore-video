@@ -1,5 +1,5 @@
 ---
-- hosts: rasp
+- hosts: servers
   become: true
   tasks:
 
